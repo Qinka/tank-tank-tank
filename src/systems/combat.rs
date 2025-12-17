@@ -125,28 +125,27 @@ pub fn check_player_death(
         if !health.is_alive() {
             commands.entity(entity).despawn();
             
+            // 减少生命数
+            lives.lives = lives.lives.saturating_sub(1);
+            
+            // 如果还有生命，重新生成玩家
             if lives.lives > 0 {
-                lives.lives -= 1;
-                
-                // 如果还有生命，重新生成玩家
-                if lives.lives > 0 {
-                    commands.spawn((
-                        SpriteBundle {
-                            sprite: Sprite {
-                                color: PLAYER_COLOR,
-                                custom_size: Some(Vec2::new(PLAYER_SIZE, PLAYER_SIZE)),
-                                ..default()
-                            },
-                            transform: Transform::from_xyz(0.0, 0.0, Z_TANKS),
+                commands.spawn((
+                    SpriteBundle {
+                        sprite: Sprite {
+                            color: PLAYER_COLOR,
+                            custom_size: Some(Vec2::new(PLAYER_SIZE, PLAYER_SIZE)),
                             ..default()
                         },
-                        Player,
-                        Health::new(PLAYER_MAX_HEALTH),
-                        Velocity::new(0.0, 0.0),
-                        Collider::new(PLAYER_SIZE),
-                        ShootCooldown::new(SHOOT_COOLDOWN),
-                    ));
-                }
+                        transform: Transform::from_xyz(0.0, 0.0, Z_TANKS),
+                        ..default()
+                    },
+                    Player,
+                    Health::new(PLAYER_MAX_HEALTH),
+                    Velocity::new(0.0, 0.0),
+                    Collider::new(PLAYER_SIZE),
+                    ShootCooldown::new(SHOOT_COOLDOWN),
+                ));
             }
         }
     }
