@@ -1,6 +1,7 @@
 // 坦克大战 - 主程序
 
 use bevy::prelude::*;
+use bevy::state::state::NextState;
 use tank_tank_tank::components::*;
 use tank_tank_tank::constants::*;
 use tank_tank_tank::resources::*;
@@ -29,6 +30,10 @@ fn main() {
         .init_resource::<MousePosition>()
         // 启动系统
         .add_systems(Startup, (setup::setup_camera, load_font))
+        // 加载状态系统 - 等待资源加载完成
+        .add_systems(OnEnter(GameState::Loading), setup_loading_screen)
+        .add_systems(Update, check_font_loaded.run_if(in_state(GameState::Loading)))
+        .add_systems(OnExit(GameState::Loading), cleanup_loading_screen)
         // 主菜单状态系统
         .add_systems(OnEnter(GameState::MainMenu), (
             ui::setup_main_menu,
@@ -137,4 +142,58 @@ fn load_font(
     commands.insert_resource(GameFont {
         handle: font_handle,
     });
+}
+
+/// 设置加载界面
+fn setup_loading_screen(mut commands: Commands) {
+    commands.spawn((
+        NodeBundle {
+            style: Style {
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                flex_direction: FlexDirection::Column,
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::Center,
+                ..default()
+            },
+            background_color: Color::srgb(0.1, 0.1, 0.15).into(),
+            ..default()
+        },
+        LoadingScreenUI,
+    )).with_children(|parent| {
+        // 加载提示（使用简单的方块代替文字，因为字体还未加载）
+        parent.spawn(NodeBundle {
+            style: Style {
+                width: Val::Px(100.0),
+                height: Val::Px(100.0),
+                ..default()
+            },
+            background_color: Color::srgb(0.3, 0.3, 0.3).into(),
+            ..default()
+        });
+    });
+}
+
+/// 检查字体是否加载完成
+fn check_font_loaded(
+    mut next_state: ResMut<NextState<GameState>>,
+    font: Option<Res<GameFont>>,
+    asset_server: Res<AssetServer>,
+) {
+    if let Some(font) = font {
+        // 检查字体资源是否已加载
+        if asset_server.is_loaded_with_dependencies(&font.handle) {
+            next_state.set(GameState::MainMenu);
+        }
+    }
+}
+
+/// 清理加载界面
+fn cleanup_loading_screen(
+    mut commands: Commands,
+    query: Query<Entity, With<LoadingScreenUI>>,
+) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
 }

@@ -167,3 +167,6 @@ pub struct MainMenuUI;
 
 #[derive(Component)]
 pub struct GameOverUI;
+
+#[derive(Component)]
+pub struct LoadingScreenUI;
