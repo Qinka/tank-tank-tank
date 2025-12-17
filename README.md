@@ -30,6 +30,18 @@
 
 ### 安装和运行
 
+#### 1. 准备字体文件
+
+游戏使用 Adobe 思源黑体（Source Han Sans）显示中文文字。请先下载字体：
+
+1. 访问 [Source Han Sans 官方发布页](https://github.com/adobe-fonts/source-han-sans/releases)
+2. 下载 `SourceHanSansCN-Regular.otf` 文件
+3. 将文件放置在 `assets/fonts/` 目录下
+
+详细说明请查看 `assets/fonts/README.md`
+
+#### 2. 编译和运行
+
 ```bash
 # 克隆仓库
 git clone https://github.com/Qinka/tank-tank-tank.git

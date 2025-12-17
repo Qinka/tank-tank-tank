@@ -7,7 +7,7 @@ use crate::resources::*;
 use crate::states::GameState;
 
 /// 设置游戏 HUD
-pub fn setup_hud(mut commands: Commands) {
+pub fn setup_hud(mut commands: Commands, font: Res<GameFont>) {
     // 背景容器
     commands.spawn((
         NodeBundle {
@@ -38,9 +38,9 @@ pub fn setup_hud(mut commands: Commands) {
                 TextBundle::from_section(
                     "得分: 0",
                     TextStyle {
+                        font: font.handle.clone(),
                         font_size: 24.0,
                         color: Color::WHITE,
-                        ..default()
                     },
                 ),
                 UIScoreText,
@@ -51,9 +51,9 @@ pub fn setup_hud(mut commands: Commands) {
                 TextBundle::from_section(
                     "生命: 3",
                     TextStyle {
+                        font: font.handle.clone(),
                         font_size: 24.0,
                         color: Color::WHITE,
-                        ..default()
                     },
                 ),
                 UILivesText,
@@ -64,9 +64,9 @@ pub fn setup_hud(mut commands: Commands) {
                 TextBundle::from_section(
                     "波次: 1",
                     TextStyle {
+                        font: font.handle.clone(),
                         font_size: 24.0,
                         color: Color::WHITE,
-                        ..default()
                     },
                 ),
                 UIWaveText,
@@ -102,7 +102,7 @@ pub fn update_hud(
 }
 
 /// 设置主菜单
-pub fn setup_main_menu(mut commands: Commands) {
+pub fn setup_main_menu(mut commands: Commands, font: Res<GameFont>) {
     commands.spawn((
         NodeBundle {
             style: Style {
@@ -122,9 +122,9 @@ pub fn setup_main_menu(mut commands: Commands) {
         parent.spawn(TextBundle::from_section(
             "坦克大战",
             TextStyle {
+                font: font.handle.clone(),
                 font_size: 60.0,
                 color: Color::WHITE,
-                ..default()
             },
         ).with_style(Style {
             margin: UiRect::all(Val::Px(30.0)),
@@ -149,9 +149,9 @@ pub fn setup_main_menu(mut commands: Commands) {
             parent.spawn(TextBundle::from_section(
                 "开始游戏",
                 TextStyle {
+                    font: font.handle.clone(),
                     font_size: 32.0,
                     color: Color::WHITE,
-                    ..default()
                 },
             ));
         });
@@ -160,9 +160,9 @@ pub fn setup_main_menu(mut commands: Commands) {
         parent.spawn(TextBundle::from_section(
             "WASD/方向键移动 | 鼠标控制方向 | 空格/左键射击\nESC 暂停",
             TextStyle {
+                font: font.handle.clone(),
                 font_size: 20.0,
                 color: Color::srgb(0.7, 0.7, 0.7),
-                ..default()
             },
         ).with_style(Style {
             margin: UiRect::top(Val::Px(50.0)),
@@ -206,7 +206,7 @@ pub fn cleanup_main_menu(
 }
 
 /// 设置游戏结束界面
-pub fn setup_game_over(mut commands: Commands, score: Res<GameScore>) {
+pub fn setup_game_over(mut commands: Commands, score: Res<GameScore>, font: Res<GameFont>) {
     commands.spawn((
         NodeBundle {
             style: Style {
@@ -226,9 +226,9 @@ pub fn setup_game_over(mut commands: Commands, score: Res<GameScore>) {
         parent.spawn(TextBundle::from_section(
             "游戏结束",
             TextStyle {
+                font: font.handle.clone(),
                 font_size: 60.0,
                 color: Color::srgb(1.0, 0.3, 0.3),
-                ..default()
             },
         ).with_style(Style {
             margin: UiRect::all(Val::Px(30.0)),
@@ -239,9 +239,9 @@ pub fn setup_game_over(mut commands: Commands, score: Res<GameScore>) {
         parent.spawn(TextBundle::from_section(
             format!("最终得分: {}", score.score),
             TextStyle {
+                font: font.handle.clone(),
                 font_size: 40.0,
                 color: Color::WHITE,
-                ..default()
             },
         ).with_style(Style {
             margin: UiRect::all(Val::Px(20.0)),
@@ -266,9 +266,9 @@ pub fn setup_game_over(mut commands: Commands, score: Res<GameScore>) {
             parent.spawn(TextBundle::from_section(
                 "重新开始",
                 TextStyle {
+                    font: font.handle.clone(),
                     font_size: 32.0,
                     color: Color::WHITE,
-                    ..default()
                 },
             ));
         });

@@ -52,3 +52,9 @@ impl Default for EnemySpawnTimer {
 pub struct MousePosition {
     pub world_position: Vec2,
 }
+
+/// 游戏字体资源
+#[derive(Resource)]
+pub struct GameFont {
+    pub handle: Handle<Font>,
+}

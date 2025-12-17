@@ -28,7 +28,7 @@ fn main() {
         .init_resource::<EnemySpawnTimer>()
         .init_resource::<MousePosition>()
         // 启动系统
-        .add_systems(Startup, setup::setup_camera)
+        .add_systems(Startup, (setup::setup_camera, load_font))
         // 主菜单状态系统
         .add_systems(OnEnter(GameState::MainMenu), (
             ui::setup_main_menu,
@@ -125,4 +125,16 @@ fn reset_game_resources(
     wave.enemies_spawned = 0;
     wave.enemies_to_spawn = 0;
     timer.timer.reset();
+}
+
+/// 加载字体资源
+fn load_font(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+) {
+    // 加载思源黑体字体
+    let font_handle = asset_server.load("fonts/SourceHanSansCN-Regular.otf");
+    commands.insert_resource(GameFont {
+        handle: font_handle,
+    });
 }
