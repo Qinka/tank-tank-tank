@@ -76,6 +76,10 @@ impl Collider {
 #[derive(Component)]
 pub struct Wall;
 
+/// 边界墙壁标记（不参与碰撞检测，仅用于视觉显示）
+#[derive(Component)]
+pub struct BoundaryWall;
+
 /// 可破坏墙壁标记
 #[derive(Component)]
 pub struct DestructibleWall;

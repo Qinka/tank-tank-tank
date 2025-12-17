@@ -45,8 +45,7 @@ pub fn setup_boundaries(mut commands: Commands) {
             transform: Transform::from_xyz(0.0, WINDOW_HEIGHT / 2.0 - wall_thickness / 2.0, Z_WALLS),
             ..default()
         },
-        Wall,
-        Collider::new(WINDOW_WIDTH.max(wall_thickness)),
+        BoundaryWall,
     ));
     
     // 下边界
@@ -60,8 +59,7 @@ pub fn setup_boundaries(mut commands: Commands) {
             transform: Transform::from_xyz(0.0, -WINDOW_HEIGHT / 2.0 + wall_thickness / 2.0, Z_WALLS),
             ..default()
         },
-        Wall,
-        Collider::new(WINDOW_WIDTH.max(wall_thickness)),
+        BoundaryWall,
     ));
     
     // 左边界
@@ -75,8 +73,7 @@ pub fn setup_boundaries(mut commands: Commands) {
             transform: Transform::from_xyz(-WINDOW_WIDTH / 2.0 + wall_thickness / 2.0, 0.0, Z_WALLS),
             ..default()
         },
-        Wall,
-        Collider::new(WINDOW_HEIGHT.max(wall_thickness)),
+        BoundaryWall,
     ));
     
     // 右边界
@@ -90,8 +87,7 @@ pub fn setup_boundaries(mut commands: Commands) {
             transform: Transform::from_xyz(WINDOW_WIDTH / 2.0 - wall_thickness / 2.0, 0.0, Z_WALLS),
             ..default()
         },
-        Wall,
-        Collider::new(WINDOW_HEIGHT.max(wall_thickness)),
+        BoundaryWall,
     ));
 }
 

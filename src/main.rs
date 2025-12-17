@@ -98,6 +98,7 @@ fn cleanup_game_entities(
         With<Enemy>,
         With<Bullet>,
         With<Wall>,
+        With<BoundaryWall>,
         With<DestructibleWall>,
         With<Explosion>,
         With<UIHealthBar>,
