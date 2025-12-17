@@ -39,10 +39,31 @@ pub fn bullet_collision(
         (Entity, &Transform, &Collider, &mut Health, Option<&Enemy>, Option<&Player>, Option<&DestructibleWall>),
         Without<Bullet>
     >,
+    walls: Query<(&Transform, &Collider), (With<Wall>, Without<Bullet>, Without<Health>)>,
 ) {
     for (bullet_entity, bullet_transform, bullet_collider, bullet) in bullets.iter() {
         let bullet_pos = Vec2::new(bullet_transform.translation.x, bullet_transform.translation.y);
+        let mut bullet_hit = false;
         
+        // 检查子弹与不可破坏墙壁的碰撞
+        for (wall_transform, wall_collider) in walls.iter() {
+            let wall_pos = Vec2::new(wall_transform.translation.x, wall_transform.translation.y);
+            let distance = bullet_pos.distance(wall_pos);
+            let collision_distance = (bullet_collider.size + wall_collider.size) / 2.0;
+            
+            if distance < collision_distance {
+                // 子弹撞到不可破坏的墙壁，直接删除子弹
+                commands.entity(bullet_entity).despawn();
+                bullet_hit = true;
+                break;
+            }
+        }
+        
+        if bullet_hit {
+            continue;
+        }
+        
+        // 检查子弹与可破坏目标的碰撞
         for (target_entity, target_transform, target_collider, mut health, enemy, player, wall) in targets.iter_mut() {
             let target_pos = Vec2::new(target_transform.translation.x, target_transform.translation.y);
             let distance = bullet_pos.distance(target_pos);
