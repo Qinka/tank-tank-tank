@@ -46,24 +46,34 @@ fn main() {
             ui::setup_hud,
         ))
         .add_systems(Update, (
-            // 玩家系统
+            // 输入系统 - 可以并行
             player::update_mouse_position,
-            player::player_movement,
-            player::player_rotation,
-            player::player_shooting,
-            // 战斗系统
-            combat::move_bullets,
-            combat::cleanup_bullets,
-            combat::bullet_collision,
+            // 移动和AI系统 - 需要串行执行以避免冲突
+            (
+                player::player_movement,
+                player::player_rotation,
+                enemy::enemy_ai,
+            ).chain(),
+            // 碰撞系统 - 在移动后执行
+            (
+                collision::tank_wall_collision,
+                collision::tank_tank_collision,
+                collision::tank_destructible_wall_collision,
+            ).chain(),
+            // 射击和战斗系统
+            (
+                player::player_shooting,
+                enemy::spawn_enemies,
+            ),
+            // 子弹系统
+            (
+                combat::move_bullets,
+                combat::cleanup_bullets,
+                combat::bullet_collision,
+            ).chain(),
+            // 其他系统
             combat::explosion_animation,
             combat::check_player_death,
-            // 碰撞系统
-            collision::tank_wall_collision,
-            collision::tank_tank_collision,
-            collision::tank_destructible_wall_collision,
-            // 敌人系统
-            enemy::spawn_enemies,
-            enemy::enemy_ai,
             enemy::check_wave_completion,
             // UI 系统
             ui::update_hud,
