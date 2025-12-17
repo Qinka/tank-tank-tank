@@ -64,7 +64,11 @@ pub fn bullet_collision(
                     // 如果目标死亡，生成爆炸效果
                     if !health.is_alive() {
                         spawn_explosion(&mut commands, target_pos);
-                        commands.entity(target_entity).despawn();
+                        
+                        // 只有非玩家实体才立即删除（玩家由 check_player_death 处理重生）
+                        if player.is_none() {
+                            commands.entity(target_entity).despawn();
+                        }
                         
                         // 如果击杀敌人，增加分数
                         if enemy.is_some() {
