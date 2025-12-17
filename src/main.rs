@@ -45,27 +45,34 @@ fn main() {
             setup::init_wave_system,
             ui::setup_hud,
         ))
-        // 游戏进行中的系统需要按顺序执行以避免查询冲突
-        .add_systems(Update, 
-            player::update_mouse_position.run_if(in_state(GameState::Playing))
-        )
+        // 游戏进行中的系统
         .add_systems(Update, (
-            player::player_movement,
-            player::player_rotation,
+            // 输入处理
+            player::update_mouse_position,
+            // 移动和 AI（需要串行以避免 Transform 冲突）
+            (
+                player::player_movement,
+                player::player_rotation,
+            ).chain(),
             enemy::enemy_ai,
-            collision::tank_wall_collision,
-            collision::tank_tank_collision,
-            collision::tank_destructible_wall_collision,
-        ).chain().run_if(in_state(GameState::Playing)))
-        .add_systems(Update, (
+            // 碰撞检测（需要在移动后执行）
+            (
+                collision::tank_wall_collision,
+                collision::tank_tank_collision,
+                collision::tank_destructible_wall_collision,
+            ).chain(),
+            // 战斗系统
             player::player_shooting,
             enemy::spawn_enemies,
-            combat::move_bullets,
-            combat::cleanup_bullets,
-            combat::bullet_collision,
+            (
+                combat::move_bullets,
+                combat::cleanup_bullets,
+                combat::bullet_collision,
+            ).chain(),
             combat::explosion_animation,
             combat::check_player_death,
             enemy::check_wave_completion,
+            // UI 更新
             ui::update_hud,
             ui::check_game_over,
             ui::toggle_pause,
