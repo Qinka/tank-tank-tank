@@ -132,7 +132,7 @@ fn reset_game_resources(
     timer.timer.reset();
 }
 
-/// 加载字体资源
+/// 加载字体和贴图资源
 fn load_font(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -141,6 +141,15 @@ fn load_font(
     let font_handle = asset_server.load("fonts/SourceHanSansCN-Regular.otf");
     commands.insert_resource(GameFont {
         handle: font_handle,
+    });
+    
+    // 加载坦克贴图（如果文件不存在，将回退到纯色显示）
+    let player_texture = Some(asset_server.load("textures/player_tank.png"));
+    let enemy_texture = Some(asset_server.load("textures/enemy_tank.png"));
+    
+    commands.insert_resource(TankTextures {
+        player: player_texture,
+        enemy: enemy_texture,
     });
 }
 

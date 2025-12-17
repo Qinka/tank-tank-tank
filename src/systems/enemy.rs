@@ -13,6 +13,7 @@ pub fn spawn_enemies(
     mut timer: ResMut<EnemySpawnTimer>,
     mut wave: ResMut<CurrentWave>,
     enemies: Query<&Enemy>,
+    textures: Res<TankTextures>,
 ) {
     timer.timer.tick(time.delta());
 
@@ -22,13 +23,13 @@ pub fn spawn_enemies(
         && current_enemy_count < MAX_ENEMIES
         && wave.enemies_spawned < wave.enemies_to_spawn
     {
-        spawn_enemy(&mut commands);
+        spawn_enemy(&mut commands, &textures);
         wave.enemies_spawned += 1;
     }
 }
 
 /// 生成单个敌人
-fn spawn_enemy(commands: &mut Commands) {
+fn spawn_enemy(commands: &mut Commands, textures: &TankTextures) {
     let mut rng = rand::thread_rng();
 
     // 在地图边缘随机位置生成
@@ -53,16 +54,25 @@ fn spawn_enemy(commands: &mut Commands) {
 
     let spawn_pos = spawn_positions[rng.gen_range(0..spawn_positions.len())];
 
-    commands.spawn((
-        SpriteBundle {
-            sprite: Sprite {
-                color: ENEMY_COLOR,
-                custom_size: Some(Vec2::new(ENEMY_SIZE, ENEMY_SIZE)),
-                ..default()
-            },
-            transform: Transform::from_xyz(spawn_pos.x, spawn_pos.y, Z_TANKS),
+    let mut sprite_bundle = SpriteBundle {
+        sprite: Sprite {
+            color: ENEMY_COLOR,
+            custom_size: Some(Vec2::new(ENEMY_SIZE, ENEMY_SIZE)),
             ..default()
         },
+        transform: Transform::from_xyz(spawn_pos.x, spawn_pos.y, Z_TANKS),
+        ..default()
+    };
+    
+    // 如果有贴图，使用贴图；否则使用纯色
+    if let Some(ref texture) = textures.enemy {
+        sprite_bundle.texture = texture.clone();
+        // 使用白色以显示原始贴图颜色
+        sprite_bundle.sprite.color = Color::WHITE;
+    }
+
+    commands.spawn((
+        sprite_bundle,
         Enemy,
         Health::new(ENEMY_MAX_HEALTH),
         Velocity::new(0.0, 0.0),

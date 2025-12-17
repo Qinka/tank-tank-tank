@@ -145,6 +145,7 @@ pub fn check_player_death(
     mut commands: Commands,
     mut lives: ResMut<PlayerLives>,
     query: Query<(Entity, &Health), With<Player>>,
+    textures: Res<TankTextures>,
 ) {
     for (entity, health) in query.iter() {
         if !health.is_alive() {
@@ -155,16 +156,25 @@ pub fn check_player_death(
             
             // 如果还有生命，重新生成玩家
             if lives.lives > 0 {
-                commands.spawn((
-                    SpriteBundle {
-                        sprite: Sprite {
-                            color: PLAYER_COLOR,
-                            custom_size: Some(Vec2::new(PLAYER_SIZE, PLAYER_SIZE)),
-                            ..default()
-                        },
-                        transform: Transform::from_xyz(0.0, 0.0, Z_TANKS),
+                let mut sprite_bundle = SpriteBundle {
+                    sprite: Sprite {
+                        color: PLAYER_COLOR,
+                        custom_size: Some(Vec2::new(PLAYER_SIZE, PLAYER_SIZE)),
                         ..default()
                     },
+                    transform: Transform::from_xyz(0.0, 0.0, Z_TANKS),
+                    ..default()
+                };
+                
+                // 如果有贴图，使用贴图；否则使用纯色
+                if let Some(ref texture) = textures.player {
+                    sprite_bundle.texture = texture.clone();
+                    // 使用白色以显示原始贴图颜色
+                    sprite_bundle.sprite.color = Color::WHITE;
+                }
+                
+                commands.spawn((
+                    sprite_bundle,
                     Player,
                     Health::new(PLAYER_MAX_HEALTH),
                     Velocity::new(0.0, 0.0),

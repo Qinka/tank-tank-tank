@@ -58,3 +58,10 @@ pub struct MousePosition {
 pub struct GameFont {
     pub handle: Handle<Font>,
 }
+
+/// 坦克贴图资源
+#[derive(Resource)]
+pub struct TankTextures {
+    pub player: Option<Handle<Image>>,
+    pub enemy: Option<Handle<Image>>,
+}
